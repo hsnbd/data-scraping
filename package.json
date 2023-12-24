@@ -1,6 +1,10 @@
 {
   "name": "root",
   "private": true,
+  "scripts": {
+    "start:api": "lerna run start:dev --scope=nest-api",
+    "start:client": "lerna run start --scope=react-client"
+  },
   "devDependencies": {
     "lerna": "^8.0.1"
   },
