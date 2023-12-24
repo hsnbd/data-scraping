@@ -2,6 +2,7 @@ import { Injectable, OnApplicationBootstrap } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { User } from '../models/user.model';
 import * as bcrypt from 'bcrypt';
+import { UserRegistrationDto } from '../dto/user-registration.dto';
 
 @Injectable()
 export class UserService implements OnApplicationBootstrap {
@@ -36,5 +37,9 @@ export class UserService implements OnApplicationBootstrap {
 
       console.log('Admin user created successfully.');
     }
+  }
+
+  async registration(userRegistrationDto: UserRegistrationDto) {
+    return await this.createUser(userRegistrationDto);
   }
 }

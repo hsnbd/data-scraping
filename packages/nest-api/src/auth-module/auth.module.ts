@@ -10,6 +10,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ConfigKey } from '../core/config/app-config';
+import { UniqueEmailValidation } from './custom-validation/unique-email.validation';
 
 @Module({
   imports: [
@@ -25,7 +26,13 @@ import { ConfigKey } from '../core/config/app-config';
     }),
   ],
   controllers: [AuthController],
-  providers: [UserService, AuthService, LocalStrategy, JwtStrategy],
+  providers: [
+    UserService,
+    AuthService,
+    LocalStrategy,
+    JwtStrategy,
+    UniqueEmailValidation,
+  ],
   exports: [UserService, SequelizeModule],
 })
 export class AuthModule {}

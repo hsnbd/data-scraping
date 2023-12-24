@@ -14,16 +14,17 @@ export class AuthService {
     const user = await this.userService.findOneByEmail(email);
 
     if (user && (await bcrypt.compare(pass, user.password))) {
-      const result = user.toJSON();
-      delete result['password'];
-
-      return result;
+      return user.get();
     }
 
     return null;
   }
 
   async login(user: any) {
+    if (user.hasOwnProperty('password')) {
+      delete user['password'];
+    }
+
     const payload = { username: user.email, sub: user.id, ...user };
     return {
       access_token: this.jwtService.sign(payload),

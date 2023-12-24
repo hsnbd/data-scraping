@@ -7,9 +7,13 @@ import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 import helmet from 'helmet';
 import { AllExceptionsFilter } from './core/exception-filters/all-exceptions.filter';
 import { setupSwagger } from './core/lib/swagger';
+import { ValidationPipe } from '@nestjs/common';
+import { useContainer } from 'class-validator';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
+
+  useContainer(app.select(AppModule), { fallbackOnErrors: true });
 
   app.enableCors();
   app.use(helmet());
@@ -17,6 +21,8 @@ async function bootstrap() {
   const configService: ConfigService = app.get<ConfigService>(ConfigService);
 
   app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER));
+
+  app.useGlobalPipes(new ValidationPipe());
 
   const { httpAdapter } = app.get(HttpAdapterHost);
   app.useGlobalFilters(new AllExceptionsFilter(httpAdapter));
