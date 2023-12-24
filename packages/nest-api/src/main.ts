@@ -4,11 +4,15 @@ import { ConfigKey } from './core/config/app-config';
 import { ConfigService } from '@nestjs/config';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
+import helmet from 'helmet';
 import { AllExceptionsFilter } from './core/exception-filters/all-exceptions.filter';
 import { setupSwagger } from './core/lib/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
+
+  app.enableCors();
+  app.use(helmet());
 
   const configService: ConfigService = app.get<ConfigService>(ConfigService);
 
