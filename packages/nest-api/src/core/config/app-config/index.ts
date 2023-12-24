@@ -5,12 +5,22 @@ export const appConfig = {
   validationSchema: JOI.object({
     PORT: JOI.number().required(),
     APP_ENV: JOI.string().required(),
+    PGSQL_DB_HOST: JOI.string().required(),
+    PGSQL_DB_PORT: JOI.string().required(),
+    PGSQL_DB_USERNAME: JOI.string().required(),
+    PGSQL_DB_PASSWORD: JOI.string().required(),
+    PGSQL_DB_DATABASE: JOI.string().required(),
   }),
 };
 
 export enum ConfigKey {
   PORT = 'PORT',
   APP_ENV = 'APP_ENV',
+  PGSQL_DB_HOST = 'PGSQL_DB_HOST',
+  PGSQL_DB_PORT = 'PGSQL_DB_PORT',
+  PGSQL_DB_USERNAME = 'PGSQL_DB_USERNAME',
+  PGSQL_DB_PASSWORD = 'PGSQL_DB_PASSWORD',
+  PGSQL_DB_DATABASE = 'PGSQL_DB_DATABASE',
 }
 
 export enum AppEnvironment {
