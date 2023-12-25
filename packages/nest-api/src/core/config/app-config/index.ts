@@ -10,6 +10,7 @@ export const appConfig = {
     PGSQL_DB_USERNAME: JOI.string().required(),
     PGSQL_DB_PASSWORD: JOI.string().required(),
     PGSQL_DB_DATABASE: JOI.string().required(),
+    JWT_SECRET: JOI.string().required(),
   }),
 };
 
@@ -21,6 +22,7 @@ export enum ConfigKey {
   PGSQL_DB_USERNAME = 'PGSQL_DB_USERNAME',
   PGSQL_DB_PASSWORD = 'PGSQL_DB_PASSWORD',
   PGSQL_DB_DATABASE = 'PGSQL_DB_DATABASE',
+  JWT_SECRET = 'JWT_SECRET',
 }
 
 export enum AppEnvironment {

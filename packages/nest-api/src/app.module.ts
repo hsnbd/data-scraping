@@ -8,7 +8,7 @@ import { WinstonConfigService } from './core/config/winston/winston-config.servi
 import { ThrottlerModule } from '@nestjs/throttler';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { SequelizeConfigService } from './core/config/sequelize/sequelize-config.service';
-import { UserModule } from './user-module/user.module';
+import { AuthModule } from './auth-module/auth.module';
 
 @Module({
   imports: [
@@ -25,7 +25,7 @@ import { UserModule } from './user-module/user.module';
     SequelizeModule.forRootAsync({
       useClass: SequelizeConfigService,
     }),
-    UserModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

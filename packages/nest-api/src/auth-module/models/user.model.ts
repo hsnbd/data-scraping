@@ -34,4 +34,11 @@ export class User extends Model<User> {
     comment: 'pending=  0, active= 1, deactivate = 48',
   })
   row_status: number;
+
+  @Column({
+    type: DataTypes.STRING(150),
+    allowNull: false,
+    validate: { notNull: true },
+  })
+  password: string;
 }
