@@ -86,7 +86,9 @@ describe('UserService', () => {
     });
 
     it('should not create admin user if already exists', async () => {
-      jest.spyOn(userService, 'findOneByEmail').mockResolvedValueOnce({} as User);
+      jest
+        .spyOn(userService, 'findOneByEmail')
+        .mockResolvedValueOnce({} as User);
 
       await userService.onApplicationBootstrap();
 

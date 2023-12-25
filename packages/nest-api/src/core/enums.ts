@@ -3,3 +3,14 @@ export enum UserRowStatus {
   ACTIVE = 1,
   DEACTIVATE = 99,
 }
+export enum KeywordRecordStatus {
+  DRAFT = 0,
+  PROCESSING = 1,
+  DONE = 2,
+}
+export enum GooglePageSelectors {
+  SPONSOR_1_LINKS = '#taw a',
+  ALL_PAGE_LINKS = 'body a',
+  SPONSOR_2_LINKS = '#idonnoyet a',
+  RESULT_STATS = '#result-stats',
+}

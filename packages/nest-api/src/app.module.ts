@@ -9,6 +9,7 @@ import { ThrottlerModule } from '@nestjs/throttler';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { SequelizeConfigService } from './core/config/sequelize/sequelize-config.service';
 import { AuthModule } from './auth-module/auth.module';
+import { KeywordScrapingModule } from './keyword-scraping-module/keyword-scraping.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { AuthModule } from './auth-module/auth.module';
       useClass: SequelizeConfigService,
     }),
     AuthModule,
+    KeywordScrapingModule,
   ],
   controllers: [AppController],
   providers: [AppService],

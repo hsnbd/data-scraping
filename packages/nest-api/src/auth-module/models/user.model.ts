@@ -30,8 +30,8 @@ export class User extends Model<User> {
         [UserRowStatus.PENDING, UserRowStatus.ACTIVE, UserRowStatus.DEACTIVATE],
       ],
     },
-    defaultValue: 0,
-    comment: 'pending=  0, active= 1, deactivate = 48',
+    defaultValue: UserRowStatus.PENDING,
+    comment: 'pending=  0, active= 1, deactivate = 99',
   })
   row_status: number;
 
