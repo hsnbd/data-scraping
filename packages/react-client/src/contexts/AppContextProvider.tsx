@@ -1,13 +1,14 @@
 import React, { ReactNode, useEffect, useReducer } from 'react';
 
 import { ActionTypes } from './actions';
-import AppContext, { IAppContext } from './AppContext';
+import AppContext, { AppDispatch, IAppContext } from './AppContext';
 import { loadAuthUser } from './dispatchers';
 import RootReducers, { initialStates } from './reducers';
 
 interface IProjectContextComponent {
   children: ReactNode;
 }
+
 type IAppReducer = (prevState: IAppContext, action: ActionTypes) => IAppContext;
 
 const AppContextProvider = ({ children }: IProjectContextComponent) => {
@@ -17,18 +18,11 @@ const AppContextProvider = ({ children }: IProjectContextComponent) => {
     if (!contextState.authUser) {
       loadAuthUser(contextDispatch);
     }
-  }, []);
+  }, [contextState.authUser]);
 
   return (
-    <AppContext.Provider
-      value={
-        {
-          ...contextState,
-          contextDispatch,
-        } as never
-      }
-    >
-      {children}
+    <AppContext.Provider value={contextState}>
+      <AppDispatch.Provider value={contextDispatch}>{children}</AppDispatch.Provider>
     </AppContext.Provider>
   );
 };

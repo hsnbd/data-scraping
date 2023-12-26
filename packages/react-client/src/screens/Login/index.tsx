@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { NavLink } from 'react-router-dom';
+import { useContext } from 'react';
+import { NavLink, useNavigate } from 'react-router-dom';
 
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Avatar from '@mui/material/Avatar';
@@ -12,14 +13,37 @@ import Link from '@mui/material/Link';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
+import apiEndpoints from '../../constants/api-endpoints';
+import { AppDispatch } from '../../contexts/AppContext';
+import { loadAuthUser } from '../../contexts/dispatchers';
+import requestManager from '../../lib/requestManager';
+
+interface LoginResponse {
+  access_token: string;
+}
+
 const LoginScreen = (): React.JSX.Element => {
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const dispatch = useContext(AppDispatch);
+  const navigate = useNavigate();
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
+
+    requestManager<LoginResponse>('post', apiEndpoints.Login, {
+      data: { email: data.get('email'), password: data.get('password') },
+    })
+      .then((responseData: LoginResponse) => {
+        sessionStorage.setItem('access_token', responseData.access_token);
+        loadAuthUser(dispatch)
+          .then(() => {
+            navigate('/keywords');
+          })
+          .catch(() => {});
+      })
+      .catch((error) => {
+        console.log('error', error);
+      });
   };
 
   return (

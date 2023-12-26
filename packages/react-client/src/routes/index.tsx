@@ -6,6 +6,7 @@ import LoginScreen from 'screens/Login';
 
 import GuestRoute from '../components/GuestRoute';
 import ProtectedRoute from '../components/ProtectedRoute';
+import KeywordScreen from '../screens/Keyword';
 import SignupScreen from '../screens/Signup';
 
 const routes: RouteObject[] = [
@@ -33,7 +34,7 @@ const routes: RouteObject[] = [
     path: '/keywords',
     element: (
       <ProtectedRoute>
-        <h1>Keywords</h1>
+        <KeywordScreen />
       </ProtectedRoute>
     ),
   },

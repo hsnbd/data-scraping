@@ -8,6 +8,7 @@
     "@fontsource/roboto": "^5.0.8",
     "@mui/icons-material": "^5.15.2",
     "@mui/material": "^5.15.2",
+    "@mui/x-data-grid": "^6.18.6",
     "axios": "^0.21.1",
     "i18next": "^21.6.14",
     "i18next-browser-languagedetector": "^6.1.3",

@@ -1,4 +1,4 @@
-import axios, { Method as HTTPMethod, ResponseType, AxiosRequestConfig, AxiosResponse } from 'axios';
+import axios, { AxiosRequestConfig, AxiosResponse, Method as HTTPMethod, ResponseType } from 'axios';
 
 export const defaultOptions: { responseType: ResponseType } = {
   responseType: 'json',
@@ -14,11 +14,7 @@ export const defaultOptions: { responseType: ResponseType } = {
  *                   an error object for its reason
  */
 
-const requestManager = (
-  method: HTTPMethod,
-  endpoint: string,
-  requestOptions: AxiosRequestConfig = {}
-): Promise<AxiosResponse> => {
+const requestManager = <T>(method: HTTPMethod, endpoint: string, requestOptions: AxiosRequestConfig = {}): Promise<T> => {
   const requestParams: AxiosRequestConfig = {
     method,
     url: endpoint,

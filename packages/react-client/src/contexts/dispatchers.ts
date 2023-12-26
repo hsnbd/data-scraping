@@ -1,4 +1,5 @@
 import { ActionTypes, UPDATE_AUTH_USER, UPDATE_AUTH_USER_NOTIFICATIONS, userLoading } from './actions';
+import apiEndpoints from '../constants/api-endpoints';
 import requestManager from '../lib/requestManager';
 
 interface ProfileResponse {
@@ -15,9 +16,9 @@ export const loadAuthUser = async (dispatch: (val: ActionTypes) => void) => {
       throw new Error('Access token is null');
     }
 
-    const authUser = (await requestManager('get', 'http://localhost:4000/profile', {
+    const authUser = await requestManager<ProfileResponse>('get', apiEndpoints.ProfileFetch, {
       headers: { authorization: `Bearer ${token}` },
-    })) as unknown as ProfileResponse;
+    });
 
     dispatch({
       type: UPDATE_AUTH_USER,
@@ -26,6 +27,29 @@ export const loadAuthUser = async (dispatch: (val: ActionTypes) => void) => {
         email: authUser.email,
         fullName: authUser.full_name,
       },
+    });
+  } catch (err: unknown) {
+    dispatch({
+      type: UPDATE_AUTH_USER,
+      payload: null,
+    });
+  } finally {
+    dispatch(userLoading(false));
+  }
+};
+
+export const logout = async (dispatch: (val: ActionTypes) => void) => {
+  dispatch(userLoading(true));
+  try {
+    const token = sessionStorage.getItem('access_token');
+    if (!token) {
+      throw new Error('Access token is null');
+    }
+    sessionStorage.removeItem('access_token');
+
+    dispatch({
+      type: UPDATE_AUTH_USER,
+      payload: null,
     });
   } catch (err: unknown) {
     dispatch({

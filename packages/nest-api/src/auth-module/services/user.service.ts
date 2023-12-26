@@ -36,6 +36,10 @@ export class UserService implements OnApplicationBootstrap {
   }
 
   async registration(userRegistrationDto: UserRegistrationDto) {
+    userRegistrationDto.password = await bcrypt.hash(
+      userRegistrationDto.password,
+      10,
+    );
     return await this.createUser(userRegistrationDto);
   }
 }

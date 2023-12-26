@@ -1,7 +1,6 @@
 import React, { useCallback, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import AutoModeIcon from '@mui/icons-material/AutoMode';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
@@ -19,7 +18,7 @@ const HomeScreen = (): React.JSX.Element => {
     } else {
       navigate('/keywords');
     }
-  }, [authUser]);
+  }, [authUser, navigate]);
 
   return (
     <Grid container>
@@ -31,12 +30,9 @@ const HomeScreen = (): React.JSX.Element => {
           flexDirection: 'column',
           justifyContent: 'center',
           alignItems: 'center',
-          height: '95vh',
+          height: '90vh',
         }}
       >
-        <Box sx={{ my: 10 }}>
-          <AutoModeIcon sx={{ fontSize: 80 }} color={'secondary'} />
-        </Box>
         <Box>
           <Typography variant={'h1'}>{authUser && authUser?.fullName ? `Hi ${authUser.fullName}` : 'Welcome'}</Typography>
         </Box>

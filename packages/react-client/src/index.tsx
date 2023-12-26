@@ -1,9 +1,6 @@
 import React, { Suspense } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 
-import Container from '@mui/material/Container';
-import CssBaseline from '@mui/material/CssBaseline';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { createRoot } from 'react-dom/client';
 
 import App from './App';
@@ -13,7 +10,6 @@ import reportWebVitals from './reportWebVitals';
 
 configureI18n();
 
-const defaultTheme = createTheme();
 const container = document.getElementById('root') as HTMLElement;
 const root = createRoot(container);
 root.render(
@@ -21,12 +17,7 @@ root.render(
     <Suspense fallback="loading">
       <AppContextProvider>
         <BrowserRouter>
-          <ThemeProvider theme={defaultTheme}>
-            <Container component="main" maxWidth="xl">
-              <CssBaseline />
-              <App />
-            </Container>
-          </ThemeProvider>
+          <App />
         </BrowserRouter>
       </AppContextProvider>
     </Suspense>
