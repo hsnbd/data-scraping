@@ -21,11 +21,11 @@ export class SequelizeConfigService implements SequelizeOptionsFactory {
       database: this.configService.get<string>(ConfigKey.PGSQL_DB_DATABASE),
       autoLoadModels: true,
       synchronize: true,
-      logging: [AppEnvironment.LOCAL, AppEnvironment.STAGE].includes(
+      logging: /*[AppEnvironment.LOCAL, AppEnvironment.STAGE].includes(
         this.configService.get(ConfigKey.APP_ENV),
       )
         ? console.log
-        : false,
+        : */ false,
     };
   }
 }
