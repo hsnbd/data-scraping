@@ -2,7 +2,11 @@ import React from 'react';
 import { RouteObject } from 'react-router-dom';
 
 import HomeScreen from 'screens/Home';
-import Login from 'screens/Login';
+import LoginScreen from 'screens/Login';
+
+import GuestRoute from '../components/GuestRoute';
+import ProtectedRoute from '../components/ProtectedRoute';
+import SignupScreen from '../screens/Signup';
 
 const routes: RouteObject[] = [
   {
@@ -11,7 +15,27 @@ const routes: RouteObject[] = [
   },
   {
     path: '/login',
-    element: <Login />,
+    element: (
+      <GuestRoute>
+        <LoginScreen />
+      </GuestRoute>
+    ),
+  },
+  {
+    path: '/signup',
+    element: (
+      <GuestRoute>
+        <SignupScreen />
+      </GuestRoute>
+    ),
+  },
+  {
+    path: '/keywords',
+    element: (
+      <ProtectedRoute>
+        <h1>Keywords</h1>
+      </ProtectedRoute>
+    ),
   },
 ];
 

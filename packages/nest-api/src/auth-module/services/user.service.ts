@@ -8,8 +8,8 @@ import { UserRegistrationDto } from '../dto/user-registration.dto';
 export class UserService implements OnApplicationBootstrap {
   @InjectModel(User) private userModel: typeof User;
 
-  async findOneByEmail(email: string, plain = true) {
-    return this.userModel.findOne({ where: { email: email }, plain: plain });
+  async findOneByEmail(email: string, raw = true) {
+    return this.userModel.findOne({ where: { email: email }, raw });
   }
 
   async createUser(data: any) {

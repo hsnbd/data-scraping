@@ -1,22 +1,34 @@
 import React, { Suspense } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 
+import Container from '@mui/material/Container';
+import CssBaseline from '@mui/material/CssBaseline';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { createRoot } from 'react-dom/client';
 
 import App from './App';
+import AppContextProvider from './contexts/AppContextProvider';
 import configureI18n from './i18n';
 import reportWebVitals from './reportWebVitals';
 
 configureI18n();
 
+const defaultTheme = createTheme();
 const container = document.getElementById('root') as HTMLElement;
 const root = createRoot(container);
 root.render(
   <React.StrictMode>
     <Suspense fallback="loading">
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
+      <AppContextProvider>
+        <BrowserRouter>
+          <ThemeProvider theme={defaultTheme}>
+            <Container component="main" maxWidth="xl">
+              <CssBaseline />
+              <App />
+            </Container>
+          </ThemeProvider>
+        </BrowserRouter>
+      </AppContextProvider>
     </Suspense>
   </React.StrictMode>
 );
