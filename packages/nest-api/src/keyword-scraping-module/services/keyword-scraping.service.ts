@@ -7,6 +7,8 @@ import * as puppeteer from 'puppeteer';
 import { Page } from 'puppeteer';
 import * as path from 'path';
 import { GooglePageSelectors } from '../../core/enums';
+import { KeywordRecordSearchQueryDto } from '../dto/keyword-record-search-query.dto';
+import { Op } from 'sequelize';
 
 @Injectable()
 export class KeywordScrapingService {
@@ -37,7 +39,7 @@ export class KeywordScrapingService {
     });
   }
 
-  async scrapKeywords(keywords: Array<string>) {
+  async scrapKeywords(authUser: any, keywords: Array<string>) {
     const startTime = process.hrtime();
 
     // TODO: ask how many words are valid keyword and length of a valid keyword?
@@ -69,7 +71,10 @@ export class KeywordScrapingService {
       );
 
       const newKeywordRecords = await this.keywordRecordModel.bulkCreate(
-        newKeywords.map((keyword) => ({ keyword: keyword })),
+        newKeywords.map((keyword) => ({
+          keyword: keyword,
+          user_id: authUser.id,
+        })),
         { transaction },
       );
 
@@ -165,5 +170,33 @@ export class KeywordScrapingService {
     } catch (e) {
       return 0;
     }
+  }
+
+  getListData(queryDto: KeywordRecordSearchQueryDto) {
+    console.log('queryDto', queryDto);
+    return this.keywordRecordModel.findAll({
+      attributes: [
+        'id',
+        'keyword',
+        'total_advertisers',
+        'total_links',
+        'total_search_results',
+        'read_at',
+      ],
+      limit: 10,
+      order: [['scraped_at', 'desc']],
+    });
+  }
+
+  findOneById(id: number) {
+    return this.keywordRecordModel.findByPk(id);
+  }
+
+  async markAsRead(id: number) {
+    const keywordRecord = await this.findOneById(id);
+    keywordRecord.read_at = new Date();
+    await keywordRecord.save();
+
+    return keywordRecord;
   }
 }

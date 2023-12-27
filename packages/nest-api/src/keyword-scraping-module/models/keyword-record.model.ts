@@ -11,6 +11,11 @@ export class KeywordRecord extends Model<KeywordRecord> {
   })
   id: number;
 
+  @Column({
+    type: DataTypes.INTEGER.UNSIGNED,
+  })
+  user_id: number;
+
   @Column({ type: DataTypes.STRING(150), validate: { len: [0, 150] } })
   keyword: string;
 
@@ -50,4 +55,7 @@ export class KeywordRecord extends Model<KeywordRecord> {
 
   @Column({ type: DataTypes.DATE, allowNull: true })
   scraped_at: Date;
+
+  @Column({ type: DataTypes.DATE, allowNull: true })
+  read_at: Date;
 }
