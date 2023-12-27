@@ -7,8 +7,8 @@ import {
   ParseFilePipe,
   Post,
   Query,
+  Req,
   Request,
-  StreamableFile,
   UploadedFile,
   UseGuards,
   UseInterceptors,
@@ -18,7 +18,6 @@ import { JwtAuthGuard } from '../auth-module/guards/jwt-auth.guard';
 import { KeywordRecordSearchQueryDto } from './dto/keyword-record-search-query.dto';
 import { KeywordScrapingService } from './services/keyword-scraping.service';
 import { FileInterceptor } from '@nestjs/platform-express';
-import * as Papa from 'papaparse';
 
 @ApiTags('keyword-scraping')
 @ApiBearerAuth('Authorization')
@@ -33,7 +32,7 @@ export class KeywordScrapingController {
     @Request() req: any,
     @Query() queryDto: KeywordRecordSearchQueryDto,
   ) {
-    return queryDto;
+    return this.keywordScrapingService.getListData(queryDto);
   }
 
   @Post('keyword-records')
@@ -62,9 +61,10 @@ export class KeywordScrapingController {
       }),
     )
     file: Express.Multer.File,
+    @Req() req: any,
   ) {
     const keywords = await this.keywordScrapingService.processCsvFile(file);
 
-    return await this.keywordScrapingService.scrapKeywords(keywords);
+    return await this.keywordScrapingService.scrapKeywords(req.user, keywords);
   }
 }

@@ -1,55 +1,80 @@
 import React from 'react';
 
+import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
-import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridFilterModel, GridRowParams } from '@mui/x-data-grid';
+
+import UploadKeywordCsv from './UploadKeywordCsv';
+import useKeywordListData from '../../hooks/useKeywordListData';
 
 const KeywordScreen = (): React.JSX.Element => {
   const columns: GridColDef[] = [
-    { field: 'id', headerName: 'ID', width: 90 },
     {
-      field: 'firstName',
-      headerName: 'First name',
-      width: 150,
-      editable: true,
+      field: 'keyword',
+      headerName: 'Keyword',
+      flex: 1,
     },
     {
-      field: 'lastName',
-      headerName: 'Last name',
-      width: 150,
-      editable: true,
-    },
-    {
-      field: 'age',
-      headerName: 'Age',
-      type: 'number',
-      width: 110,
-      editable: true,
-    },
-    {
-      field: 'fullName',
-      headerName: 'Full name',
-      description: 'This column has a value getter and is not sortable.',
+      field: 'total_search_results',
+      headerName: 'Search Results Stats',
       sortable: false,
-      width: 160,
-      valueGetter: (params: GridValueGetterParams) => `${params.row.firstName || ''} ${params.row.lastName || ''}`,
+      flex: 1,
+    },
+    {
+      field: 'total_advertisers',
+      headerName: 'Total Advertisers',
+      flex: 1,
+    },
+    {
+      field: 'total_links',
+      headerName: 'Total Links',
+      type: 'number',
+      flex: 1,
+    },
+    {
+      field: 'actions',
+      headerName: 'Actions',
+      type: 'actions',
+      flex: 1,
+      getActions: (params: GridRowParams) => [
+        <Button key={'view'} variant={'contained'}>
+          {params.row.id}
+        </Button>,
+      ],
     },
   ];
 
-  const rows = [
-    { id: 1, lastName: 'Snow', firstName: 'Jon', age: 14 },
-    { id: 2, lastName: 'Lannister', firstName: 'Cersei', age: 31 },
-    { id: 3, lastName: 'Lannister', firstName: 'Jaime', age: 31 },
-    { id: 4, lastName: 'Stark', firstName: 'Arya', age: 11 },
-    { id: 5, lastName: 'Targaryen', firstName: 'Daenerys', age: null },
-    { id: 6, lastName: 'Melisandre', firstName: null, age: 150 },
-    { id: 7, lastName: 'Clifford', firstName: 'Ferrara', age: 44 },
-    { id: 8, lastName: 'Frances', firstName: 'Rossini', age: 36 },
-    { id: 9, lastName: 'Roxie', firstName: 'Harvey', age: 65 },
-  ];
+  const { isLoading, data, applyFilter } = useKeywordListData();
+
+  const onFilterChange = React.useCallback((filterModel: GridFilterModel) => {
+    applyFilter(filterModel);
+  }, []);
+
+  const [paginationModel, setPaginationModel] = React.useState({
+    page: 0,
+    pageSize: 10,
+  });
+
+  const [rowCountState] = React.useState(10);
+
   return (
     <Grid container>
+      <Grid item md={12} mb={3}>
+        <UploadKeywordCsv />
+      </Grid>
       <Grid item md={12}>
-        <DataGrid columns={columns} rows={rows} />
+        <DataGrid
+          rowCount={rowCountState}
+          pageSizeOptions={[10, 20]}
+          paginationModel={paginationModel}
+          onPaginationModelChange={setPaginationModel}
+          paginationMode="server"
+          onFilterModelChange={onFilterChange}
+          loading={isLoading}
+          columns={columns}
+          rows={(data as unknown as Array<never>) || []}
+          filterMode="server"
+        />
       </Grid>
     </Grid>
   );
