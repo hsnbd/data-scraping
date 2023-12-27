@@ -1,11 +1,28 @@
 import React from 'react';
+import { NavLink } from 'react-router-dom';
 
+import SummarizeIcon from '@mui/icons-material/Summarize';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
+import { alpha, darken, lighten, styled } from '@mui/material/styles';
 import { DataGrid, GridColDef, GridFilterModel, GridRowParams } from '@mui/x-data-grid';
 
 import UploadKeywordCsv from './UploadKeywordCsv';
 import useKeywordListData from '../../hooks/useKeywordListData';
+
+const getBackgroundColor = (color: string, mode: string) => (mode === 'dark' ? darken(color, 0.7) : lighten(color, 0.7));
+
+const StyledDataGrid = styled(DataGrid)(({ theme }) => ({
+  '& .unread-keyword-report': {
+    backgroundColor: getBackgroundColor(theme.palette.warning.main, theme.palette.mode),
+    '&:hover, &.Mui-hovered': {
+      backgroundColor: alpha(theme.palette.warning.main, 0.2),
+      '@media (hover: none)': {
+        backgroundColor: 'transparent',
+      },
+    },
+  },
+}));
 
 const KeywordScreen = (): React.JSX.Element => {
   const columns: GridColDef[] = [
@@ -37,8 +54,15 @@ const KeywordScreen = (): React.JSX.Element => {
       type: 'actions',
       flex: 1,
       getActions: (params: GridRowParams) => [
-        <Button key={'view'} variant={'contained'}>
-          {params.row.id}
+        <Button
+          key={'view'}
+          variant={'contained'}
+          color={'error'}
+          startIcon={<SummarizeIcon />}
+          component={NavLink}
+          to={`/keywords/${params.row.id}`}
+        >
+          Reports
         </Button>,
       ],
     },
@@ -63,7 +87,7 @@ const KeywordScreen = (): React.JSX.Element => {
         <UploadKeywordCsv />
       </Grid>
       <Grid item md={12}>
-        <DataGrid
+        <StyledDataGrid
           rowCount={rowCountState}
           pageSizeOptions={[10, 20]}
           paginationModel={paginationModel}
@@ -74,6 +98,9 @@ const KeywordScreen = (): React.JSX.Element => {
           columns={columns}
           rows={(data as unknown as Array<never>) || []}
           filterMode="server"
+          getRowClassName={(params: GridRowParams) => {
+            return !params.row?.read_at ? 'unread-keyword-report' : '';
+          }}
         />
       </Grid>
     </Grid>

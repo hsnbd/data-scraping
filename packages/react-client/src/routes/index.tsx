@@ -7,6 +7,7 @@ import LoginScreen from 'screens/Login';
 import GuestRoute from '../components/GuestRoute';
 import ProtectedRoute from '../components/ProtectedRoute';
 import KeywordScreen from '../screens/Keyword';
+import KeywordDetailsReportScreen from '../screens/KeywordDetailsReport';
 import SignupScreen from '../screens/Signup';
 
 const routes: RouteObject[] = [
@@ -35,6 +36,14 @@ const routes: RouteObject[] = [
     element: (
       <ProtectedRoute>
         <KeywordScreen />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/keywords/:id',
+    element: (
+      <ProtectedRoute>
+        <KeywordDetailsReportScreen />
       </ProtectedRoute>
     ),
   },

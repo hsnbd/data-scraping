@@ -55,4 +55,7 @@ export class KeywordRecord extends Model<KeywordRecord> {
 
   @Column({ type: DataTypes.DATE, allowNull: true })
   scraped_at: Date;
+
+  @Column({ type: DataTypes.DATE, allowNull: true })
+  read_at: Date;
 }

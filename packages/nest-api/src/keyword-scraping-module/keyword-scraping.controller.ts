@@ -4,8 +4,12 @@ import {
   Get,
   Inject,
   MaxFileSizeValidator,
+  Param,
   ParseFilePipe,
+  ParseIntPipe,
+  Patch,
   Post,
+  Put,
   Query,
   Req,
   Request,
@@ -66,5 +70,15 @@ export class KeywordScrapingController {
     const keywords = await this.keywordScrapingService.processCsvFile(file);
 
     return await this.keywordScrapingService.scrapKeywords(req.user, keywords);
+  }
+
+  @Get('keyword-records/:id')
+  singleKeywordRecord(@Param('id', ParseIntPipe) id: number) {
+    return this.keywordScrapingService.findOneById(id);
+  }
+
+  @Patch('keyword-records/:id/mark-as-read')
+  markAsRead(@Param('id', ParseIntPipe) id: number) {
+    return this.keywordScrapingService.markAsRead(id);
   }
 }

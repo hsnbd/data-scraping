@@ -70,23 +70,9 @@ const UploadKeywordCsv = (): React.JSX.Element => {
         position: 'relative',
       }}
     >
-      <Box
-        component="label"
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-      >
-        <CloudUploadIcon sx={{ mr: 1 }} /> Upload keywords (csv only)
-        <VisuallyHiddenInput type="file" accept="text/csv" onChange={handleFileChange} />
-      </Box>
       {isFileUploading || !!fileUploadStatus ? (
         <Box
           sx={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
             background: '#e8e8e8',
             width: '100%',
             height: '100%',
@@ -106,7 +92,17 @@ const UploadKeywordCsv = (): React.JSX.Element => {
           )}
         </Box>
       ) : (
-        ''
+        <Box
+          component="label"
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <CloudUploadIcon sx={{ mr: 1 }} /> Upload keywords (csv only)
+          <VisuallyHiddenInput type="file" accept="text/csv" onChange={handleFileChange} />
+        </Box>
       )}
     </Box>
   );

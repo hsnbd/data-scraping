@@ -8,6 +8,7 @@ import { Page } from 'puppeteer';
 import * as path from 'path';
 import { GooglePageSelectors } from '../../core/enums';
 import { KeywordRecordSearchQueryDto } from '../dto/keyword-record-search-query.dto';
+import { Op } from 'sequelize';
 
 @Injectable()
 export class KeywordScrapingService {
@@ -180,8 +181,22 @@ export class KeywordScrapingService {
         'total_advertisers',
         'total_links',
         'total_search_results',
+        'read_at',
       ],
       limit: 10,
+      order: [['scraped_at', 'desc']],
     });
+  }
+
+  findOneById(id: number) {
+    return this.keywordRecordModel.findByPk(id);
+  }
+
+  async markAsRead(id: number) {
+    const keywordRecord = await this.findOneById(id);
+    keywordRecord.read_at = new Date();
+    await keywordRecord.save();
+
+    return keywordRecord;
   }
 }

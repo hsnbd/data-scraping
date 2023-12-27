@@ -2,6 +2,7 @@ import React, { Suspense } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 
 import { createRoot } from 'react-dom/client';
+import { SWRConfig } from 'swr';
 
 import App from './App';
 import AppContextProvider from './contexts/AppContextProvider';
@@ -16,9 +17,18 @@ root.render(
   <React.StrictMode>
     <Suspense fallback="loading">
       <AppContextProvider>
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>
+        <SWRConfig
+          value={{
+            provider: () => new Map(),
+            revalidateIfStale: true,
+            revalidateOnFocus: true,
+            revalidateOnReconnect: true,
+          }}
+        >
+          <BrowserRouter>
+            <App />
+          </BrowserRouter>
+        </SWRConfig>
       </AppContextProvider>
     </Suspense>
   </React.StrictMode>
