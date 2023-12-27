@@ -3,6 +3,7 @@
   "private": true,
   "scripts": {
     "start:api": "lerna run start:dev --scope=nest-api",
+    "start:scraping": "lerna run start:dev:scraping --scope=nest-api",
     "start:client": "lerna run start --scope=react-client"
   },
   "devDependencies": {

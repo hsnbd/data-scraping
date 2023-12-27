@@ -23,6 +23,8 @@ export enum ConfigKey {
   PGSQL_DB_PASSWORD = 'PGSQL_DB_PASSWORD',
   PGSQL_DB_DATABASE = 'PGSQL_DB_DATABASE',
   JWT_SECRET = 'JWT_SECRET',
+  RMQ_URL = 'RMQ_URL',
+  RMQ_QUEUE = 'RMQ_QUEUE',
 }
 
 export enum AppEnvironment {
