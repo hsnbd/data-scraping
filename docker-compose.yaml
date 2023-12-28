@@ -1,6 +1,9 @@
 version: '3.7'
 
 services:
+  nest-api:
+    build:
+      context: ./packages/nest-api/
   rabbitmq:
     image: docker.io/bitnami/rabbitmq:3.11
     ports:
@@ -15,7 +18,7 @@ services:
       - RABBITMQ_PASSWORD=password
       - RABBITMQ_LOGS=-
       - RABBITMQ_MANAGEMENT_ALLOW_WEB_ACCESS=true
-#scraping_queue
+    #scraping_queue
     volumes:
       - 'rabbitmq_data:/bitnami/rabbitmq/mnesia'
 volumes:

@@ -43,15 +43,6 @@ export class KeywordRecordService {
   }
 
   async processKeywords(authUser: any, keywords: Array<string>) {
-    // TODO: ask how many words are valid keyword and length of a valid keyword?
-    // TODO: Search across all reports. (What would be the purpose of this search)?
-    // TODO: The total number of links (all of them) on the page. ? (Google now use infinity scrolling. SO now all of them means all of them in initial load)?
-    // Exclude already scraped keywords
-    // Add Auth id to keywords
-    // Store all keywords to db
-    // Scrape keywords and update records
-    // Return back to the user
-
     const transaction = await this.sequelize.transaction();
     try {
       const existingKeywordRecords = await this.keywordRecordModel.findAll({
@@ -111,6 +102,7 @@ export class KeywordRecordService {
 
   async getListData(queryDto: KeywordRecordSearchQueryDto, user: any) {
     const query = this.prepareListDataQuery(queryDto, user);
+
     const data = await this.keywordRecordModel.findAndCountAll({
       attributes: [
         'id',
@@ -150,11 +142,6 @@ export class KeywordRecordService {
 
   async saveScrapingData(data: ScrapeJobDonePayload) {
     try {
-      console.log(
-        'keywordRecord',
-        await this.keywordRecordModel.findByPk(data.id),
-      );
-      console.log('keywordRecord', data);
       const keywordRecord = await this.findOneById(data.id);
       delete data['id'];
       keywordRecord.set(data);

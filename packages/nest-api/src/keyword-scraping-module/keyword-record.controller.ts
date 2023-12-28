@@ -103,8 +103,9 @@ export class KeywordRecordController {
     try {
       await this.keywordRecordService.saveScrapingData(data);
       channel.ack(originalMsg);
-      console.log('con', RmqMessagePatterns.SCRAPING_JOB_DONE, data);
+      console.log('done', RmqMessagePatterns.SCRAPING_JOB_DONE, data.keyword);
     } catch (e) {
+      channel.nack(originalMsg, false, true);
       console.log('eeee', e);
     }
   }

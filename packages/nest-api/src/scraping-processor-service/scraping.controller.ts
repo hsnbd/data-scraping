@@ -25,6 +25,7 @@ export class ScrapingController {
       this.keywordScrapeService.notifyScrapingDoneStatus(result);
       channel.ack(originalMsg);
     } catch (e) {
+      channel.nack(originalMsg, false, true);
       console.log('eeee', e);
     }
   }
