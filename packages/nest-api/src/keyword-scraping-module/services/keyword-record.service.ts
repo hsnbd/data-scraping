@@ -8,6 +8,7 @@ import { SCRAPING_SENDING } from '../../core/constants';
 import { ClientProxy, RmqRecordBuilder } from '@nestjs/microservices';
 import { KeywordRecordStatus, RmqMessagePatterns } from '../../core/enums';
 import { ScrapeJobDonePayload } from '../../core/types';
+import { Op } from 'sequelize';
 
 @Injectable()
 export class KeywordRecordService {
@@ -114,9 +115,9 @@ export class KeywordRecordService {
     }
   }
 
-  getListData(queryDto: KeywordRecordSearchQueryDto) {
-    console.log('queryDto', queryDto);
-    return this.keywordRecordModel.findAll({
+  async getListData(queryDto: KeywordRecordSearchQueryDto, user: any) {
+    const query = this.prepareListDataQuery(queryDto, user);
+    const data = await this.keywordRecordModel.findAndCountAll({
       attributes: [
         'id',
         'keyword',
@@ -125,9 +126,19 @@ export class KeywordRecordService {
         'total_search_results',
         'read_at',
       ],
-      limit: 10,
       order: [['scraped_at', 'desc']],
+      ...query,
     });
+
+    return {
+      data: data.rows,
+      paginate: {
+        total: data.count,
+        per_page: query.limit,
+        current_page:
+          query.limit === 0 ? 0 : Math.floor(query.offset / query.limit),
+      },
+    };
   }
 
   findOneById(id: number) {
@@ -159,5 +170,29 @@ export class KeywordRecordService {
       console.log('eeee', e);
       throw e;
     }
+  }
+
+  private prepareListDataQuery(
+    queryDto: KeywordRecordSearchQueryDto,
+    user: any,
+  ) {
+    const query: any = { limit: 10, offset: 0 };
+    if (queryDto.limit < 500) {
+      query.limit = queryDto.limit;
+    }
+
+    if (queryDto?.page && queryDto.page > 0) {
+      query.offset = queryDto.page * query.limit;
+    }
+
+    query.where = {
+      user_id: user.id,
+    };
+
+    if (queryDto?.search?.length) {
+      query.where['keyword'] = { [Op.like]: `%${queryDto.search}%` };
+    }
+
+    return query;
   }
 }

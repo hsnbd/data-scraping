@@ -38,7 +38,7 @@ export class KeywordRecordController {
     @Request() req: any,
     @Query() queryDto: KeywordRecordSearchQueryDto,
   ) {
-    return this.keywordRecordService.getListData(queryDto);
+    return this.keywordRecordService.getListData(queryDto, req.user);
   }
 
   @ApiBearerAuth('Authorization')
