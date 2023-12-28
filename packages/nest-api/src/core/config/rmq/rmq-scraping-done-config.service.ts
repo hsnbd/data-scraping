@@ -5,7 +5,9 @@ import { ClientsModuleOptionsFactory } from '@nestjs/microservices/module/interf
 import { ConfigKey } from '../app-config';
 
 @Injectable()
-export class RmqClientConfigService implements ClientsModuleOptionsFactory {
+export class RmqScrapingDoneConfigService
+  implements ClientsModuleOptionsFactory
+{
   @Inject()
   private configService: ConfigService;
 
@@ -14,7 +16,7 @@ export class RmqClientConfigService implements ClientsModuleOptionsFactory {
       transport: Transport.RMQ,
       options: {
         urls: [this.configService.get<string>(ConfigKey.RMQ_URL)],
-        queue: this.configService.get<string>(ConfigKey.RMQ_QUEUE),
+        queue: this.configService.get<string>(ConfigKey.RMQ_RECEIVING_QUEUE),
         queueOptions: {
           durable: true,
         },

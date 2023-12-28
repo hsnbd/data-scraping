@@ -17,4 +17,5 @@ export enum GooglePageSelectors {
 
 export enum RmqMessagePatterns {
   SCRAPE_KEYWORD = 'SCRAPE_KEYWORD',
+  SCRAPING_JOB_DONE = 'SCRAPING_JOB_DONE',
 }

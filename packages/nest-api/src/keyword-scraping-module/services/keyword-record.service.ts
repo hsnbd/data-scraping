@@ -3,17 +3,19 @@ import * as Papa from 'papaparse';
 import { InjectModel } from '@nestjs/sequelize';
 import { KeywordRecord } from '../models/keyword-record.model';
 import { Sequelize } from 'sequelize-typescript';
-import * as puppeteer from 'puppeteer';
-import { Page } from 'puppeteer';
-import * as path from 'path';
-import { GooglePageSelectors } from '../../core/enums';
 import { KeywordRecordSearchQueryDto } from '../dto/keyword-record-search-query.dto';
-import { Op } from 'sequelize';
+import { SCRAPING_SENDING } from '../../core/constants';
+import { ClientProxy, RmqRecordBuilder } from '@nestjs/microservices';
+import { KeywordRecordStatus, RmqMessagePatterns } from '../../core/enums';
+import { ScrapeJobDonePayload } from '../../core/types';
 
 @Injectable()
-export class KeywordScrapingService {
+export class KeywordRecordService {
   @Inject()
   private readonly sequelize: Sequelize;
+
+  @Inject(SCRAPING_SENDING)
+  private readonly rmqClient: ClientProxy;
 
   @InjectModel(KeywordRecord)
   private readonly keywordRecordModel: typeof KeywordRecord;
@@ -39,7 +41,7 @@ export class KeywordScrapingService {
     });
   }
 
-  async scrapKeywords(authUser: any, keywords: Array<string>) {
+  async processKeywords(authUser: any, keywords: Array<string>) {
     const startTime = process.hrtime();
 
     // TODO: ask how many words are valid keyword and length of a valid keyword?
@@ -78,48 +80,27 @@ export class KeywordScrapingService {
         { transaction },
       );
 
-      const browser = await puppeteer.launch({
-        headless: false,
-        userDataDir: path.join(__dirname, 'puppeteer-cache-dir'),
-        // args: [`--proxy-server=112.109.16.51:8080`],
-      });
+      for (let i = 0; i < newKeywordRecords.length; i++) {
+        const keywordRecord = newKeywordRecords[i];
 
-      const processKeywordRecord = async (record: KeywordRecord) => {
-        const page = await browser.newPage();
-        page.setDefaultNavigationTimeout(60000);
-        try {
-          await page.setViewport({ width: 1280, height: 720 });
+        const record = new RmqRecordBuilder({
+          keyword: keywordRecord.keyword,
+          id: keywordRecord.id,
+        }).build();
 
-          const websiteUrl = `https://www.google.com/search?q=${encodeURIComponent(
-            record.keyword,
-          )}`;
-          await page.goto(websiteUrl, { waitUntil: 'networkidle0' });
-
-          record.total_search_results = await this.parsePageResultState(page);
-
-          record.total_advertisers =
-            await this.parsePageAdvertisersLinkAndCount(page);
-
-          record.total_links = await this.parsePageAllLinkAndCount(page);
-
-          record.html_code = await page.content();
-
-          return record.save({ transaction });
-        } finally {
-          await page.close();
-        }
-      };
-
-      await Promise.all(
-        newKeywordRecords.map((record) => processKeywordRecord(record)),
-      );
-
-      // await this.keywordRecordModel.bulkCreate(results as Array<any>, {
-      //   updateOnDuplicate: ['id'],
-      //   transaction,
-      // });
-
-      await browser.close();
+        this.rmqClient
+          .emit(RmqMessagePatterns.SCRAPE_KEYWORD, record)
+          .subscribe({
+            next: async () => {
+              console.log('next', RmqMessagePatterns.SCRAPE_KEYWORD);
+            },
+            error: async (err) => {
+              console.log('error', RmqMessagePatterns.SCRAPE_KEYWORD);
+              console.error('client.emit,err,', err);
+            },
+            // complete: () => {},
+          });
+      }
 
       await transaction.commit();
 
@@ -130,45 +111,6 @@ export class KeywordScrapingService {
       console.log('eeee', e);
       await transaction.rollback();
       throw e;
-    }
-  }
-
-  private async parsePageResultState(page: Page) {
-    return page.$eval(
-      GooglePageSelectors.RESULT_STATS,
-      (element) => element.textContent,
-    );
-  }
-
-  private async parsePageAdvertisersLinkAndCount(page: Page) {
-    try {
-      return page.$$eval(GooglePageSelectors.SPONSOR_1_LINKS, (links) => {
-        const uniqueLinksSet = new Set();
-
-        links.forEach((link) => {
-          const href = link.getAttribute('href');
-          if (href) {
-            try {
-              const host = new URL(href).host;
-              uniqueLinksSet.add(host);
-            } catch (e) {}
-          }
-        });
-        return uniqueLinksSet.size;
-      });
-    } catch (e) {
-      return 0;
-    }
-  }
-
-  private async parsePageAllLinkAndCount(page: Page) {
-    try {
-      return page.$$eval(
-        GooglePageSelectors.ALL_PAGE_LINKS,
-        (links) => links.length,
-      );
-    } catch (e) {
-      return 0;
     }
   }
 
@@ -198,5 +140,24 @@ export class KeywordScrapingService {
     await keywordRecord.save();
 
     return keywordRecord;
+  }
+
+  async saveScrapingData(data: ScrapeJobDonePayload) {
+    try {
+      console.log(
+        'keywordRecord',
+        await this.keywordRecordModel.findByPk(data.id),
+      );
+      console.log('keywordRecord', data);
+      const keywordRecord = await this.findOneById(data.id);
+      delete data['id'];
+      keywordRecord.set(data);
+      keywordRecord.scraped_at = new Date();
+      keywordRecord.row_status = KeywordRecordStatus.DONE;
+      await keywordRecord.save();
+    } catch (e) {
+      console.log('eeee', e);
+      throw e;
+    }
   }
 }
