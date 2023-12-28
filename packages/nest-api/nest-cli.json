@@ -11,7 +11,7 @@
       "collection": "@nestjs/schematics",
       "sourceRoot": "src",
       "type": "application",
-      "entryFile": "scraping",
+      "entryFile": "scraping-processor-service/scraping",
       "compilerOptions": {
         "deleteOutDir": true
       }

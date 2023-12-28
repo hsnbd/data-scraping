@@ -43,8 +43,6 @@ export class KeywordRecordService {
   }
 
   async processKeywords(authUser: any, keywords: Array<string>) {
-    const startTime = process.hrtime();
-
     // TODO: ask how many words are valid keyword and length of a valid keyword?
     // TODO: Search across all reports. (What would be the purpose of this search)?
     // TODO: The total number of links (all of them) on the page. ? (Google now use infinity scrolling. SO now all of them means all of them in initial load)?
@@ -92,22 +90,18 @@ export class KeywordRecordService {
         this.rmqClient
           .emit(RmqMessagePatterns.SCRAPE_KEYWORD, record)
           .subscribe({
-            next: async () => {
+            /*next: async () => {
               console.log('next', RmqMessagePatterns.SCRAPE_KEYWORD);
-            },
+            },*/
             error: async (err) => {
-              console.log('error', RmqMessagePatterns.SCRAPE_KEYWORD);
-              console.error('client.emit,err,', err);
+              console.log('error', RmqMessagePatterns.SCRAPE_KEYWORD, err);
             },
-            // complete: () => {},
           });
       }
 
       await transaction.commit();
 
-      const endTime = process.hrtime(startTime);
-      const elapsedTimeInSeconds = endTime[0] + endTime[1] / 1e9;
-      return `Script took ${elapsedTimeInSeconds.toFixed(4)} seconds to run.`;
+      return 'Keywords successfully placed for scraping. Please wait a while';
     } catch (e) {
       console.log('eeee', e);
       await transaction.rollback();
@@ -124,9 +118,10 @@ export class KeywordRecordService {
         'total_advertisers',
         'total_links',
         'total_search_results',
+        'scraped_at',
         'read_at',
       ],
-      order: [['scraped_at', 'desc']],
+      order: [['scraped_at', 'asc']],
       ...query,
     });
 

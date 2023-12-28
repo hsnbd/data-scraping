@@ -21,7 +21,11 @@ const VisuallyHiddenInput = styled('input')({
   width: 1,
 });
 
-const UploadKeywordCsv = (): React.JSX.Element => {
+interface UploadKeywordCsvProps {
+  mutateList: () => void;
+}
+
+const UploadKeywordCsv = ({ mutateList }: UploadKeywordCsvProps): React.JSX.Element => {
   const [isFileUploading, setIsFileUploading] = useState<boolean>(false);
   const [fileUploadStatus, setFileUploadStatus] = useState<string>('');
 
@@ -44,6 +48,7 @@ const UploadKeywordCsv = (): React.JSX.Element => {
     })
       .then((response) => {
         setFileUploadStatus(response);
+        mutateList();
       })
       .catch((error) => {
         console.log('error', error);
@@ -96,16 +101,17 @@ const UploadKeywordCsv = (): React.JSX.Element => {
           component="label"
           sx={{
             display: 'flex',
+            width: '100%',
+            height: '100%',
             alignItems: 'center',
             justifyContent: 'center',
           }}
         >
           <CloudUploadIcon sx={{ mr: 1 }} /> Upload keywords (csv only)
-          <VisuallyHiddenInput type="file" accept="text/csv" onChange={handleFileChange} />
+          <VisuallyHiddenInput type="file" name={'file'} accept="text/csv" onChange={handleFileChange} />
         </Box>
       )}
     </Box>
   );
 };
-
 export default UploadKeywordCsv;

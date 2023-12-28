@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { Transport } from '@nestjs/microservices';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { appConfig, ConfigKey } from './core/config/app-config';
+import { appConfig, ConfigKey } from '../core/config/app-config';
 import { ScrapingModule } from './scraping.module';
 
 async function bootstrap() {

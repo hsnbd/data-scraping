@@ -2,7 +2,7 @@ import { Controller, Inject } from '@nestjs/common';
 import { Ctx, EventPattern, Payload, RmqContext } from '@nestjs/microservices';
 import { RmqMessagePatterns } from '../core/enums';
 import { ScrapeKeywordPayload } from '../core/types';
-import { KeywordScrapeService } from './services/keyword-scrape.service';
+import { KeywordScrapeService } from './keyword-scrape.service';
 
 @Controller()
 export class ScrapingController {

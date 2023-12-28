@@ -2,10 +2,10 @@ import { Inject, Injectable } from '@nestjs/common';
 import * as puppeteer from 'puppeteer';
 import { Page } from 'puppeteer';
 import * as path from 'path';
-import { GooglePageSelectors, RmqMessagePatterns } from '../../core/enums';
-import { ScrapeJobDonePayload, ScrapeKeywordPayload } from '../../core/types';
+import { GooglePageSelectors, RmqMessagePatterns } from '../core/enums';
+import { ScrapeJobDonePayload, ScrapeKeywordPayload } from '../core/types';
 import { ClientProxy, RmqRecordBuilder } from '@nestjs/microservices';
-import { SCRAPING_DONE } from '../../core/constants';
+import { SCRAPING_DONE } from '../core/constants';
 
 @Injectable()
 export class KeywordScrapeService {
