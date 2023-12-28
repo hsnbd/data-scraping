@@ -13,14 +13,18 @@ export class KeywordScrapeService {
   private readonly rmqClient: ClientProxy;
 
   async scrapeKeyword(data: ScrapeKeywordPayload) {
+    const start = Date.now();
     const browser = await puppeteer.launch({
       headless: 'new',
       userDataDir: path.join(__dirname, 'puppeteer-cache-dir'),
-      // args: [`--proxy-server=112.109.16.51:8080`],
+      args: [
+        // `--proxy-server=112.109.16.51:8080`,
+      ],
     });
 
     const page = await browser.newPage();
     page.setDefaultNavigationTimeout(60000);
+
     try {
       //TODO: I think html content should not be saved in db. it could be in file
       const scrapedData = {
@@ -30,7 +34,14 @@ export class KeywordScrapeService {
         total_links: 0,
         html_code: '',
       };
-      await page.setViewport({ width: 1280, height: 720 });
+      await page.setViewport({
+        width: 1280,
+        height: 720,
+        deviceScaleFactor: 1,
+        hasTouch: false,
+        isLandscape: false,
+        isMobile: false,
+      });
 
       const websiteUrl = `https://www.google.com/search?q=${encodeURIComponent(
         data.keyword,
@@ -45,6 +56,8 @@ export class KeywordScrapeService {
       scrapedData.total_links = await this.parsePageAllLinkAndCount(page);
 
       scrapedData.html_code = await page.content();
+
+      console.log('Took', Date.now() - start, 'ms');
       return scrapedData;
     } finally {
       await page.close();
@@ -97,12 +110,11 @@ export class KeywordScrapeService {
     this.rmqClient
       .emit(RmqMessagePatterns.SCRAPING_JOB_DONE, record)
       .subscribe({
-        next: async () => {
+        /*        next: async () => {
           console.log('next', RmqMessagePatterns.SCRAPING_JOB_DONE);
-        },
+        },*/
         error: async (err) => {
-          console.log('error', RmqMessagePatterns.SCRAPING_JOB_DONE);
-          console.error('client.emit,err,', err);
+          console.log('error', RmqMessagePatterns.SCRAPING_JOB_DONE, err);
         },
         // complete: () => {},
       });

@@ -14,14 +14,13 @@ export class ScrapingController {
     @Payload() data: ScrapeKeywordPayload,
     @Ctx() context: RmqContext,
   ) {
-    console.log(RmqMessagePatterns.SCRAPE_KEYWORD, data, context);
+    console.log(RmqMessagePatterns.SCRAPE_KEYWORD, data);
 
     const channel = context.getChannelRef();
     const originalMsg = context.getMessage();
 
     try {
       const result = await this.keywordScrapeService.scrapeKeyword(data);
-      console.log('result', result);
       this.keywordScrapeService.notifyScrapingDoneStatus(result);
       channel.ack(originalMsg);
     } catch (e) {

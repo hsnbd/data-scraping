@@ -1,19 +1,26 @@
-FROM node:18-alpine As build
+FROM node:20-alpine as builder
 
-WORKDIR /usr/src/app
+ENV NODE_ENV build
 
-COPY . .
+USER node
+WORKDIR /home/node
 
-RUN yarn set version berry
-RUN yarn install
+COPY --chown=app:node package*.json ./
+RUN npm install
 
-# Run the build command which creates the production bundle
-RUN yarn build core-api
+COPY --chown=node:node . .
+RUN npm run build
 
 
-# Set NODE_ENV environment variable
+FROM node:20-alpine
+
 ENV NODE_ENV production
 
-EXPOSE 4000
-# Start the server using the production build
-CMD [ "node", "dist/apps/core-api/src/main.js" ]
+USER node
+WORKDIR /home/node
+
+COPY --from=builder --chown=node:node /home/node/package*.json ./
+COPY --from=builder --chown=node:node /home/node/node_modules/ ./node_modules/
+COPY --from=builder --chown=node:node /home/node/dist/ ./dist/
+
+CMD ["node", "dist/server.js"]

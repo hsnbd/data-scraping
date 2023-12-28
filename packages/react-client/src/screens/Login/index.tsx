@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
@@ -25,6 +25,7 @@ interface LoginResponse {
 const LoginScreen = (): React.JSX.Element => {
   const dispatch = useContext(AppDispatch);
   const navigate = useNavigate();
+  const [loginErrorMessage, setLoginErrorMessage] = useState<string>('');
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -39,10 +40,14 @@ const LoginScreen = (): React.JSX.Element => {
           .then(() => {
             navigate('/keywords');
           })
-          .catch(() => {});
+          .catch(() => {
+            sessionStorage.removeItem('access_token');
+            setLoginErrorMessage('Login error');
+          });
       })
       .catch((error) => {
         console.log('error', error);
+        setLoginErrorMessage(error?.response?.statusText || 'Login error');
       });
   };
 
@@ -62,7 +67,17 @@ const LoginScreen = (): React.JSX.Element => {
         Sign in
       </Typography>
       <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
-        <TextField margin="normal" required fullWidth id="email" label="Email Address" name="email" autoComplete="email" />
+        <TextField
+          error={loginErrorMessage.length > 0}
+          helperText={loginErrorMessage}
+          margin="normal"
+          required
+          fullWidth
+          id="email"
+          label="Email Address"
+          name="email"
+          autoComplete="email"
+        />
         <TextField
           margin="normal"
           required
