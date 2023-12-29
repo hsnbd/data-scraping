@@ -20,11 +20,11 @@ async function bootstrap() {
     options: {
       urls: [configService.get<string>(ConfigKey.RMQ_URL)],
       queue: configService.get<string>(ConfigKey.RMQ_RECEIVING_QUEUE),
+      noAck: false,
+      prefetchCount: 5,
       queueOptions: {
         durable: true,
       },
-      noAck: false,
-      prefetchCount: 5,
     },
   });
 
