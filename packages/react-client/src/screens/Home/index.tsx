@@ -37,7 +37,7 @@ const HomeScreen = (): React.JSX.Element => {
           <Typography variant={'h1'}>{authUser && authUser?.fullName ? `Hi ${authUser.fullName}` : 'Welcome'}</Typography>
         </Box>
         <Box>
-          <Typography variant={'body1'}>Upload your keywords CSV and get google search result reports</Typography>
+          <Typography variant={'body1'}>Upload your keywords CSV and get the scraping reports</Typography>
         </Box>
         <Box sx={{ mt: 10 }}>
           <Button variant={'contained'} color={'secondary'} onClick={onClickGetStarted}>

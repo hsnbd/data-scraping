@@ -14,3 +14,8 @@ export enum GooglePageSelectors {
   SPONSOR_2_LINKS = '#idonnoyet a',
   RESULT_STATS = '#result-stats',
 }
+
+export enum RmqMessagePatterns {
+  SCRAPE_KEYWORD = 'SCRAPE_KEYWORD',
+  SCRAPING_JOB_DONE = 'SCRAPING_JOB_DONE',
+}

@@ -9,16 +9,29 @@ import { AllExceptionsFilter } from './core/exception-filters/all-exceptions.fil
 import { setupSwagger } from './core/lib/swagger';
 import { ValidationPipe } from '@nestjs/common';
 import { useContainer } from 'class-validator';
+import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  const configService: ConfigService = app.get<ConfigService>(ConfigService);
+
+  app.connectMicroservice<MicroserviceOptions>({
+    transport: Transport.RMQ,
+    options: {
+      urls: [configService.get<string>(ConfigKey.RMQ_URL)],
+      queue: configService.get<string>(ConfigKey.RMQ_RECEIVING_QUEUE),
+      noAck: false,
+      prefetchCount: 5,
+      queueOptions: {
+        durable: true,
+      },
+    },
+  });
 
   useContainer(app.select(AppModule), { fallbackOnErrors: true });
 
   app.enableCors();
   app.use(helmet());
-
-  const configService: ConfigService = app.get<ConfigService>(ConfigService);
 
   app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER));
 
@@ -29,6 +42,7 @@ async function bootstrap() {
 
   setupSwagger(app).catch(console.log);
 
+  await app.startAllMicroservices();
   await app.listen(configService.get<number>(ConfigKey.PORT));
 
   console.log(

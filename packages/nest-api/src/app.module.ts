@@ -10,6 +10,9 @@ import { SequelizeModule } from '@nestjs/sequelize';
 import { SequelizeConfigService } from './core/config/sequelize/sequelize-config.service';
 import { AuthModule } from './auth-module/auth.module';
 import { KeywordScrapingModule } from './keyword-scraping-module/keyword-scraping.module';
+import { ClientsModule } from '@nestjs/microservices';
+import { RmqScrapingSendingConfigService } from './core/config/rmq/rmq-scraping-sending-config.service';
+import { SCRAPING_SENDING } from './core/constants';
 
 @Module({
   imports: [
@@ -26,6 +29,9 @@ import { KeywordScrapingModule } from './keyword-scraping-module/keyword-scrapin
     SequelizeModule.forRootAsync({
       useClass: SequelizeConfigService,
     }),
+    ClientsModule.registerAsync([
+      { useClass: RmqScrapingSendingConfigService, name: SCRAPING_SENDING },
+    ]),
     AuthModule,
     KeywordScrapingModule,
   ],
