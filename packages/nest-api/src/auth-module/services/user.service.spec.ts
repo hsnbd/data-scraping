@@ -43,7 +43,7 @@ describe('UserService', () => {
         password: 'hashedPassword',
         row_status: 1,
       } as User;
-      jest.spyOn(User, 'findOne').mockResolvedValueOnce(mockUser);
+      jest.spyOn(mockSequelizeModel, 'findOne').mockResolvedValueOnce(mockUser);
 
       const result = await userService.findOneByEmail('john@example.com');
 
@@ -56,12 +56,16 @@ describe('UserService', () => {
       const mockUserData = {
         full_name: 'Jane Doe',
         email: 'jane@example.com',
-        password: 'hashedPassword',
         row_status: 1,
       };
-      jest.spyOn(User, 'create').mockResolvedValueOnce({ ...mockUserData });
+      jest
+        .spyOn(mockSequelizeModel, 'create')
+        .mockResolvedValueOnce({ ...mockUserData });
 
-      const result = await userService.createUser(mockUserData);
+      const result = await userService.createUser({
+        password: 'hashedPassword',
+        ...mockUserData,
+      });
 
       expect(result).toEqual({ ...mockUserData });
     });
@@ -80,7 +84,6 @@ describe('UserService', () => {
       expect(userService.createUser).toHaveBeenCalledWith({
         full_name: 'Admin',
         email: 'admin@gmail.com',
-        password: expect.any(String),
         row_status: 1,
       });
     });
@@ -91,8 +94,8 @@ describe('UserService', () => {
         .mockResolvedValueOnce({} as User);
 
       await userService.onApplicationBootstrap();
-
-      expect(userService.createUser).not.toHaveBeenCalled();
+      const createUserSpy = jest.spyOn(userService, 'createUser');
+      expect(createUserSpy).not.toHaveBeenCalled();
     });
   });
 

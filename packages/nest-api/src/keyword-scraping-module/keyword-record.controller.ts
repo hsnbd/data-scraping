@@ -95,7 +95,7 @@ export class KeywordRecordController {
     @Payload() data: ScrapeJobDonePayload,
     @Ctx() context: RmqContext,
   ) {
-    console.log(RmqMessagePatterns.SCRAPING_JOB_DONE, data, context);
+    console.log(RmqMessagePatterns.SCRAPING_JOB_DONE, data.keyword);
 
     const channel = context.getChannelRef();
     const originalMsg = context.getMessage();

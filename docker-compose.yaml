@@ -1,11 +1,23 @@
 version: '3.7'
 
 services:
-  nest-api:
-    container_name: nest-api
-    build:
-      context: ./packages/nest-api/
+  postgresql:
+    container_name: postgresql
+    networks:
+      - bridge-net
+    image: docker.io/bitnami/postgresql:11
+    ports:
+      - '5432:5432'
+    environment:
+      - POSTGRESQL_USERNAME=postgres
+      - POSTGRESQL_PASSWORD=password
+      - POSTGRESQL_DATABASE=data_scrapers
+    volumes:
+      - 'postgresql_data:/bitnami/postgresql'
   rabbitmq:
+    container_name: rabbitmq
+    networks:
+      - bridge-net
     image: docker.io/bitnami/rabbitmq:3.11
     ports:
       - '4369:4369'
@@ -22,6 +34,38 @@ services:
     #scraping_queue
     volumes:
       - 'rabbitmq_data:/bitnami/rabbitmq/mnesia'
+  nest-api:
+    container_name: nest-api
+    restart: unless-stopped
+    networks:
+      - bridge-net
+    build:
+      context: ./packages/nest-api/
+    env_file:
+      - ./packages/nest-api/.env.docker.local
+    ports:
+      - '4000:4000'
+    depends_on:
+      - postgresql
+      - rabbitmq
+  react-ui:
+    container_name: react-ui
+    restart: unless-stopped
+    networks:
+      - bridge-net
+    depends_on:
+      - nest-api
+    build:
+      context: ./packages/react-client/
+    env_file:
+      - ./packages/react-client/.env.docker.local
+    ports:
+      - '80:80'
 volumes:
   rabbitmq_data:
     driver: local
+  postgresql_data:
+    driver: local
+networks:
+  bridge-net:
+    driver: bridge

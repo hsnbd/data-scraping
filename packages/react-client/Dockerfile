@@ -1,19 +1,17 @@
-FROM node:18-alpine As build
+FROM node:20-alpine as builder
 
-WORKDIR /usr/src/app
+USER node
+WORKDIR /app
 
-COPY . .
+COPY --chown=node:node package*.json ./
+ENV PATH /app/node_modules/.bin:$PATH
+RUN npm install
 
-RUN yarn set version berry
-RUN yarn install
+COPY --chown=node:node . .
+RUN npm run build
 
-# Run the build command which creates the production bundle
-RUN yarn build core-api
-
-
-# Set NODE_ENV environment variable
-ENV NODE_ENV production
-
-EXPOSE 4000
-# Start the server using the production build
-CMD [ "node", "dist/apps/core-api/src/main.js" ]
+FROM nginx:1.19.0
+WORKDIR /usr/share/nginx/html
+RUN rm -rf ./*
+COPY --from=builder --chown=node:node /app/build .
+ENTRYPOINT ["nginx", "-g", "daemon off;"]

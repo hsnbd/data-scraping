@@ -18,7 +18,7 @@ export class KeywordScrapeService {
       headless: 'new',
       userDataDir: path.join(__dirname, 'puppeteer-cache-dir'),
       args: [
-        // `--proxy-server=112.109.16.51:8080`,
+        // `--proxy-server=112.109.16.51:8080`, //TODO: not working as expected
       ],
     });
 
