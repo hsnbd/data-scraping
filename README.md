@@ -2,6 +2,8 @@
 
 ## Overview
 A web application that will extract large amounts of data from the Google search results page
+![image](https://github.com/hsnbd/data-scraping/assets/15382311/ab9a39d2-f10d-4416-a99f-903d4733e595)
+
 
 ## Technology stack
 - NestJS for API
@@ -17,7 +19,7 @@ Clone project using git
 git clone https://github.com/hsnbd/data-scraping.git
 ```
 
-Install npm dependency for workstation. (You can run project individually to. I just keep it in workstation for one git repo)
+Install npm dependency for the workstation. (You can run the project individually too. I just keep it in the workstation for one git repo)
 ```shell
 npm install
 ```
@@ -45,4 +47,4 @@ npm run start:client
 ```
 
 - A new user will be created on nestjs bootstrap. (`u: admin@gmail.com, p: password`)
-- Swagger API docs url `/open-api` for backend api
+- Swagger API docs URL `/open-api` for backend API
