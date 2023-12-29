@@ -15,19 +15,6 @@ async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   const configService: ConfigService = app.get<ConfigService>(ConfigService);
 
-  app.connectMicroservice<MicroserviceOptions>({
-    transport: Transport.RMQ,
-    options: {
-      urls: [configService.get<string>(ConfigKey.RMQ_URL)],
-      queue: configService.get<string>(ConfigKey.RMQ_RECEIVING_QUEUE),
-      noAck: false,
-      prefetchCount: 5,
-      queueOptions: {
-        durable: true,
-      },
-    },
-  });
-
   useContainer(app.select(AppModule), { fallbackOnErrors: true });
 
   app.enableCors();
@@ -42,6 +29,21 @@ async function bootstrap() {
 
   setupSwagger(app).catch(console.log);
 
+  app.connectMicroservice<MicroserviceOptions>(
+    {
+      transport: Transport.RMQ,
+      options: {
+        urls: [configService.get<string>(ConfigKey.RMQ_URL)],
+        queue: configService.get<string>(ConfigKey.RMQ_RECEIVING_QUEUE),
+        queueOptions: {
+          durable: true,
+        },
+        noAck: false,
+        prefetchCount: 1,
+      },
+    },
+    { inheritAppConfig: true },
+  );
   await app.startAllMicroservices();
   await app.listen(configService.get<number>(ConfigKey.PORT));
 

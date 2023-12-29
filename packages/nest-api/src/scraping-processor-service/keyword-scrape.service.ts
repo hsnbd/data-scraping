@@ -1,7 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import * as puppeteer from 'puppeteer';
 import { Page } from 'puppeteer';
-import * as path from 'path';
 import { GooglePageSelectors, RmqMessagePatterns } from '../core/enums';
 import { ScrapeJobDonePayload, ScrapeKeywordPayload } from '../core/types';
 import { ClientProxy, RmqRecordBuilder } from '@nestjs/microservices';
@@ -16,7 +15,7 @@ export class KeywordScrapeService {
     const start = Date.now();
     const browser = await puppeteer.launch({
       headless: 'new',
-      userDataDir: path.join(__dirname, 'puppeteer-cache-dir'),
+      userDataDir: './puppeteer-cache-dir',
       args: [
         // `--proxy-server=112.109.16.51:8080`, //TODO: not working as expected
       ],
