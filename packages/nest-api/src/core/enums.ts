@@ -9,9 +9,7 @@ export enum KeywordRecordStatus {
   DONE = 2,
 }
 export enum GooglePageSelectors {
-  SPONSOR_1_LINKS = '#taw a',
-  ALL_PAGE_LINKS = 'body a',
-  SPONSOR_2_LINKS = '#idonnoyet a',
+  SPONSOR_1_ROOT = '#taw',
   RESULT_STATS = '#result-stats',
 }
 
