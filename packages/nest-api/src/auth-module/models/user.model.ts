@@ -1,7 +1,7 @@
 import { DataTypes } from 'sequelize';
-import { Column, Model, Table } from 'sequelize-typescript';
-import { EMAIL_REGEX } from '../../core/constants';
+import { Column, HasMany, Model, Table } from 'sequelize-typescript';
 import { UserRowStatus } from '../../core/enums';
+import { KeywordRecord } from '../../keyword-scraping-module/models/keyword-record.model';
 
 @Table({ modelName: 'users' })
 export class User extends Model<User> {
@@ -12,14 +12,18 @@ export class User extends Model<User> {
   })
   id: number;
 
-  @Column({ type: DataTypes.STRING(150), validate: { len: [0, 150] } })
+  @Column({
+    type: DataTypes.STRING(150),
+    allowNull: false,
+    validate: { notNull: true, len: [1, 150] },
+  })
   full_name: string;
 
   @Column({
     type: DataTypes.STRING(150),
     allowNull: false,
     unique: true,
-    validate: { notNull: true, is: EMAIL_REGEX, len: [0, 150] },
+    validate: { notNull: true, isEmail: true, len: [5, 150] },
   })
   email: string;
 
@@ -30,8 +34,8 @@ export class User extends Model<User> {
         [UserRowStatus.PENDING, UserRowStatus.ACTIVE, UserRowStatus.DEACTIVATE],
       ],
     },
-    defaultValue: UserRowStatus.PENDING,
-    comment: 'pending=  0, active= 1, deactivate = 99',
+    defaultValue: UserRowStatus.ACTIVE,
+    comment: 'pending= 0, active= 1, deactivate = 99',
   })
   row_status: number;
 
@@ -41,4 +45,7 @@ export class User extends Model<User> {
     validate: { notNull: true },
   })
   password: string;
+
+  @HasMany(() => KeywordRecord)
+  keywordRecords: KeywordRecord[];
 }

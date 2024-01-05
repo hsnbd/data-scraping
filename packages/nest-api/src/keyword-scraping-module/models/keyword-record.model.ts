@@ -1,6 +1,14 @@
 import { DataTypes } from 'sequelize';
-import { Column, Model, Table } from 'sequelize-typescript';
+import {
+  BelongsTo,
+  Column,
+  ForeignKey,
+  Index,
+  Model,
+  Table,
+} from 'sequelize-typescript';
 import { KeywordRecordStatus } from '../../core/enums';
+import { User } from '../../auth-module/models/user.model';
 
 @Table({ modelName: 'keyword_records' })
 export class KeywordRecord extends Model<KeywordRecord> {
@@ -11,23 +19,33 @@ export class KeywordRecord extends Model<KeywordRecord> {
   })
   id: number;
 
+  @ForeignKey(() => User)
   @Column({
     type: DataTypes.INTEGER.UNSIGNED,
+    allowNull: false,
+    validate: { notNull: true },
   })
   user_id: number;
 
-  @Column({ type: DataTypes.STRING(150), validate: { len: [0, 150] } })
+  @Index('kr_keyword')
+  @Column({
+    type: DataTypes.STRING(150),
+    allowNull: false,
+    validate: { notNull: true, len: [1, 150] },
+  })
   keyword: string;
 
   @Column({
     type: DataTypes.SMALLINT.UNSIGNED,
     defaultValue: 0,
+    validate: { isNumeric: true },
   })
   total_advertisers: number;
 
   @Column({
     type: DataTypes.SMALLINT.UNSIGNED,
     defaultValue: 0,
+    validate: { isNumeric: true },
   })
   total_links: number;
 
@@ -39,7 +57,9 @@ export class KeywordRecord extends Model<KeywordRecord> {
 
   @Column({
     type: DataTypes.SMALLINT.UNSIGNED,
+    allowNull: false,
     validate: {
+      notNull: true,
       isIn: [
         [
           KeywordRecordStatus.DRAFT,
@@ -53,9 +73,12 @@ export class KeywordRecord extends Model<KeywordRecord> {
   })
   row_status: number;
 
-  @Column({ type: DataTypes.DATE, allowNull: true })
+  @Column({ type: DataTypes.DATE, allowNull: true, validate: { isDate: true } })
   scraped_at: Date;
 
-  @Column({ type: DataTypes.DATE, allowNull: true })
+  @Column({ type: DataTypes.DATE, allowNull: true, validate: { isDate: true } })
   read_at: Date;
+
+  @BelongsTo(() => User)
+  user: User;
 }
