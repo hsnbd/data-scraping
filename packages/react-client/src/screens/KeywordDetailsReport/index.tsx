@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import { NavLink, useParams } from 'react-router-dom';
 
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 import { Card, CardActions, CardContent } from '@mui/material';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
@@ -27,14 +26,6 @@ const KeywordDetailsReportScreen = (): React.JSX.Element => {
       });
     }
   }, [id]);
-
-  const downloadPageHtml = (htmlCode: string, keyword: string) => {
-    const element = document.createElement('a');
-    const file = new Blob([htmlCode], { type: 'text/html' });
-    element.href = URL.createObjectURL(file);
-    element.download = `${keyword}.html`;
-    element.click();
-  };
 
   return (
     <Grid container>
@@ -76,14 +67,8 @@ const KeywordDetailsReportScreen = (): React.JSX.Element => {
                 <Grid item md={6}>
                   <TextField disabled value={data.total_links} label={'Total Links'} fullWidth />
                 </Grid>
-                <Grid item md={6}>
-                  <Button
-                    variant={'contained'}
-                    onClick={() => downloadPageHtml(data.html_code, data.keyword)}
-                    startIcon={<CloudDownloadIcon />}
-                  >
-                    Download Page Html
-                  </Button>
+                <Grid item md={12}>
+                  <iframe title="HTML Content" width="100%" height="500px" srcDoc={data.html_code}></iframe>
                 </Grid>
               </Grid>
             </CardContent>
