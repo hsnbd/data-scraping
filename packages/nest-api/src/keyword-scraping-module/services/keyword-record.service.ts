@@ -171,7 +171,9 @@ export class KeywordRecordService {
       user_id: user.id,
     };
 
-    if (queryDto?.search?.length) {
+    if (queryDto?.keyword?.length) {
+      query.where['keyword'] = { [Op.like]: `%${queryDto.keyword}%` };
+    } else if (queryDto?.search?.length) {
       query.where['keyword'] = { [Op.like]: `%${queryDto.search}%` };
     }
 
